@@ -5,7 +5,9 @@ We need to track the samples that fail (for reporting to clients) as well as tho
 so it's important to keep track of the files that are too small to analyze and are removed after dehosting etc. 
 
 <b>To Run:</b>
+
 (assuming you have pandas installed in an environment called pandas):
+
 conda deactivate pandas
 
 python3 /path/to/script/CompareFastqsToConsensusLists_AddToMergeQCpyResult.py
