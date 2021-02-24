@@ -112,18 +112,9 @@ df_FastqDiffs3_4_5_merge2 = pd.merge(df_FastqDiffs4_merge5.iloc[:, 0:29], df_Fas
 #check content:
 #df_FastqDiffs3_4_5_merge2.to_csv('df_FastqDiffs3_4_5_merge2.csv') #has a header ('sample'), just doesn't show in preview for whatever reason
 
-
-#Combine the columns I want:
-# df_FastqDiffs6 = df_FastqDiffs3.iloc[:, 0:28]
-# print(df_FastqDiffs6)
-# df_FastqDiffs7 = df_FastqDiffs4.iloc[:, 0:1]
-# print(df_FastqDiffs7)   
-# df_FastqDiffs8 = df_FastqDiffs5.iloc[:, 0:1]
-#print(df_FastqDiffs8)
-# df_FastqDiffs9 = df_ncov_variant_lineage_artic_merge.iloc[:, 30:35]
-# df_FastqDiffs10 = df_ncov_variant_lineage_artic_merge.iloc[:, 29:30]
-# #print(df_FastqDiffs9)
-# #print(df_FastqDiffs10)
+#Replace the 0's for Ct and Coll Date and everything else, with Nothing, so they don't mess up results/date formatting etc.
+df_FastqDiffs3_4_5_merge4 = df_FastqDiffs3_4_5_merge2.replace(0,'')
+#print(df_FastqDiffs3_4_5_merge4)
 
 
 for dir_path, dir_names, file_names in os.walk(cwdPath):
@@ -138,19 +129,11 @@ for dir_path, dir_names, file_names in os.walk(cwdPath):
 #MERGE the mergeQCresults.py result file with the Missing SampleIDs:
 df_ncovtoolsSummary2 = df_ncovtoolsSummary.iloc[:, 1:32]
 #print(df_ncovtoolsSummary2)
-df_ncovtoolsSummary_plusMissing1 = [df_ncovtoolsSummary2, df_FastqDiffs3_4_5_merge2]
-df_ncovtoolsSummary_plusMissing = df_ncovtoolsSummary2.append(df_FastqDiffs3_4_5_merge2, ignore_index=True)
-    
-# df_ncovtoolsSummary_plusMissing = pd.merge(df_ncovtoolsSummary, df_FastqDiffs, how='left', left_on='sample', right_on='0')
-#print(df_ncovtoolsSummary_plusMissing)
-
-#df_ncov_variant_merge = pd.merge(df_ncovtools, df_variantsum3, how='left', left_on='sample', right_on='sample_id')
-#print(df_ncov_variant_merge) #works
+df_ncovtoolsSummary_plusMissing = df_ncovtoolsSummary2.append(df_FastqDiffs3_4_5_merge4, ignore_index=True)
 
 #Read in final2 file from mergeQCresults.py and then
 #save final3 file as csv (easier to open in Excel than tsv):
 #(this has only the columns I want to link my dashboard to, for various people's purposes)
-
 df_ncovtoolsSummary_plusMissing.to_csv(MiSeqRunID + '_' + 'MissingPlus_QC_lineage_VoC_OrderedFinal.csv')
 
 #Run Bash Commands to Remove Unnecessary Files: 
