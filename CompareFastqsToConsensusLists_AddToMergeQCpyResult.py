@@ -30,7 +30,7 @@ MiSeqRunID = os.path.basename(os.path.normpath(cwdPath))
 #Run bash commands to generate the 2 files to compare (FastqList and ConsensusList):
 bashCommandTest = "ls"
 bashCommand1 = "ls ../../analysis_by_run/" + MiSeqRunID + "/ncov2019-artic-nf-v1.1-output/ncovIllumina_sequenceAnalysis_makeConsensus/*.primertrimmed.consensus.fa | cut -d/ -f7 | cut -d. -f1 >ConsensusList.txt" 
-bashCommand2 = "ls ../../direct_fastq_symlinks_by_run/" + MiSeqRunID + "/*.fastq.gz | cut -d/ -f5 | cut -d. -f1 | cut -d_ -f1 >FastqList.txt"
+bashCommand2 = "ls ../../direct_fastq_symlinks_by_run/" + MiSeqRunID + "/*.fastq.gz | cut -d/ -f5 | cut -d. -f1 | cut -d_ -f1 | sort -u | sed '/Undetermined/d' >FastqList.txt"
 #print(bashCommandTest)
 #print(bashCommand1)
 #print(bashCommand2)
@@ -43,29 +43,31 @@ subprocess.run(bashCommand2, shell=True, check=True)
 
 #df_FastqList1 = pd.read_table("FastqList.txt", header=None)
 
-
-#create list of sampleIDs to remove (e.g. Undetermined) from lists:
-RemoveLines = ['Undetermined', 'undetermined']
-#Find those lines in the FastqList.txt file and create a new file without them:
-with open('FastqList.txt') as df_FastqList1, open('FastqList2.txt', 'w') as df_FastqList2:
-    for line in df_FastqList1:
-        if not any(RemoveLines in line for RemoveLines in RemoveLines):
-            df_FastqList2.write(line)
+#NO LONGER NEEDED since I updated the bash command to produce a list with no duplicates and Undetermined file removed:
+# #create list of sampleIDs to remove (e.g. Undetermined) from lists:
+# RemoveLines = ['Undetermined', 'undetermined']
+# #Find those lines in the FastqList.txt file and create a new file without them:
+# with open('FastqList.txt') as df_FastqList1, open('FastqList2.txt', 'w') as df_FastqList2:
+#     for line in df_FastqList1:
+#         if not any(RemoveLines in line for RemoveLines in RemoveLines):
+#             df_FastqList2.write(line)
 
 #Read in lists of sampleIDs:
-df_FastqList2 = pd.read_table("FastqList2.txt", header=None)
+df_FastqList = pd.read_table("FastqList.txt", header=None)
 #print(df_FastqList2)
-#Remove duplicate sampleIDs in Fastq List:
-df_FastqList3 = df_FastqList2.drop_duplicates([0], keep='first') 
-#print(df_FastqList3)
-#os.path.join(cwdPath, "FastqList.txt")
+#NO LONGER NEEDED since I updated the bash command to produce a list with no duplicates and Undetermined file removed:
+# #Remove duplicate sampleIDs in Fastq List:
+# df_FastqList3 = df_FastqList2.drop_duplicates([0], keep='first') 
+# #print(df_FastqList3)
+# #os.path.join(cwdPath, "FastqList.txt")
+
 df_ConsensusList = pd.read_table("ConsensusList.txt", header=None)
 #print(df_ConsensusList)
 
 
 #Extract sampleIDs that are in FastqList but NOT in ConsensusList:
 #df_FastqDiffs = df_ConsensusList[df_ConsensusList.isin(df_FastqList3)].dropna(how = 'all')
-df_FastqDiffs1 = df_FastqList3.loc[~df_FastqList3[0].isin(df_ConsensusList[0])].copy()
+df_FastqDiffs1 = df_FastqList.loc[~df_FastqList[0].isin(df_ConsensusList[0])].copy()
 #print(df_FastqDiffs1)
 #df3 = df1.loc[~df1['ID'].isin(df2['ID'])].copy()
 
@@ -137,7 +139,7 @@ df_ncovtoolsSummary_plusMissing = df_ncovtoolsSummary2.append(df_FastqDiffs3_4_5
 df_ncovtoolsSummary_plusMissing.to_csv(MiSeqRunID + '_' + 'MissingPlus_QC_lineage_VoC_OrderedFinal.csv')
 
 #Run Bash Commands to Remove Unnecessary Files: 
-bashCommand3 = "rm FastqList.txt; rm FastqList2.txt; rm ConsensusList.txt" 
+bashCommand3 = "rm FastqList.txt; rm ConsensusList.txt" 
 #bashCommand4 = ""
 subprocess.run(bashCommand3, shell=True, check=True)
 #subprocess.run(bashCommand4, shell=True, check=True)
