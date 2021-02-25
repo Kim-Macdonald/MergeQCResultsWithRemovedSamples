@@ -12,4 +12,4 @@ conda deactivate pandas
 
 python3 /path/to/script/CompareFastqsToConsensusLists_AddToMergeQCpyResult.py
 
-conda deactivate pandas
+conda deactivate
