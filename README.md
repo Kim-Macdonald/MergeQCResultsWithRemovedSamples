@@ -6,9 +6,11 @@ so it's important to keep track of the files that are too small to analyze and a
 
 <b>To Run:</b>
 
+Navigate to directory with output from mergeQCresults.py
+
 (assuming you have pandas installed in an environment called pandas):
 
-conda deactivate pandas
+conda activate pandas
 
 python3 /path/to/script/CompareFastqsToConsensusLists_AddToMergeQCpyResult.py
 
